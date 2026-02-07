@@ -14,6 +14,10 @@ inline static void to_digit(int src, int base, std::vector<Digit>& dest)
 }
 
 inline static void to_digit(std::string src, bool neg, int& base, std::vector<Digit>& dest) {
+	dest.clear();
+
+	if (src.find("NaN") != std::string::npos || src.find("nan") != std::string::npos) return;
+
 	size_t start = neg ? 1 : 0;
 
 	if (src.size() >= start + 2 && src[start] == '0' && std::tolower(src[start + 1]) == 'x') {
@@ -23,15 +27,20 @@ inline static void to_digit(std::string src, bool neg, int& base, std::vector<Di
 		base = 10;
 	}
 	
-	for ( int ridx = (int)src.size() -1; ridx >= (int)start; ridx--) {
+	for (int ridx = (int)src.size() - 1; ridx >= (int)start; ridx--) {
 		char c = (char)std::tolower(src[ridx]);
-		
+		bool found = false;
 		for (const auto& d : Digits::all_digits) {
 			if (d.char_code == c && d.value < (uint32_t)(base)) {
 				dest.push_back(d);
+				found = true;
 				break;
 			}
- 					
+
+		}
+		if (!found) {
+			dest.clear();
+			return;
 		}
 	}
 }
@@ -75,6 +84,11 @@ struct number {
 
 	std::string get_str() const {
 		std::string str = "";
+
+		if (this->is_nan()) {
+			return "NaN";
+		}
+
 		if (is_negative) str += "-";
 		if(base == 16) {
 			str += "0x";
@@ -95,8 +109,12 @@ struct number {
 		}
 		return is_negative ? -val : val;
 	}
-
-	void print() {
+	bool is_nan() const { return nums.empty(); }
+	void print() const {
+		if (this->is_nan()) {
+			std::cout << "NaN\n";
+			return;
+		}
 		std::cout << "str : " << get_str() << "\n";
 		std::cout << "val : ";
 		if (base == 16) std::cout << "0x" << std::hex << get_val() << "\n";
@@ -105,76 +123,6 @@ struct number {
 };
 
 namespace Numbers {
-	number zero(0);
-}
-
-static number for_decimal(const std::string& input) {
-
-	std::string numeric_part = "";
-	bool negative = false;
-	bool found_digit = false;
-
-	for (size_t i = 0; i < input.length(); i++) {
-		char c = input[i];
-
-		if (c == '-' && !found_digit) {
-			negative = true;
-			continue;
-		}
-
-		if (isdigit(static_cast<unsigned char>(c))) {
-			numeric_part += c;
-			found_digit = true;
-		}
-		else if (found_digit) {
-			break;
-		}
-	}
-
-	if (numeric_part.empty()) return Numbers::zero;
-
-	int32_t val = std::stoi(numeric_part);
-
-	return number(val);
-}
-
-number for_hexadecimal(const std::string& input) {
-	std::string hex_part = "";
-	bool negative = false;
-	bool found_digit = false;
-
-	for (size_t i = 0; i < input.length(); i++) {
-		char c = input[i];
-
-		if (c == '-' && !found_digit) {
-			negative = true;
-			continue;
-		}
-
-		if ((c == '0') && ((i + 1 < input.length()) && std::tolower(input[i + 1]) == 'x')) {
-			i++;
-			continue;
-		}
-		if (isxdigit(static_cast<unsigned char>(c))) {
-			hex_part += c;
-			found_digit = true;
-		}
-		else if (found_digit) {
-			break;
-		}
-	}
-
-	if (hex_part.empty()) return Numbers::zero;
-
-	int32_t val = static_cast<int32_t>(std::stoul(hex_part, nullptr, 16));
-
-	return number(val);
-}
-
-static number from_string_number(const std::string& input) {
-	
-	
-
-
-	return number(0);
+	inline const number zero(0);
+	inline const number NaN("NaN");
 }

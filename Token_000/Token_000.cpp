@@ -33,18 +33,29 @@ DeliveryNet net;
 
 int main() {
 
-	number nn("-1");
+	number nn("0x23jj");
 	nn.print();
 
-	/*char in;
-	while (1) {
+	/*std::string input;
 
-		std::cout << "in: ";
-		std::cin >> in;
-		if (in == 'q') break;
-		std::cout << "out: " << (char)std::tolower(in) << "\n";
-	
+	while (1) {
+		std::cout << "enter : ";
+		std::getline(std::cin, input);
+		std::stringstream ss(input);
+
+
+		
 	}*/
+	
+	//char in;
+	//while (1) {
+
+	//	std::cout << "in: ";
+	//	std::cin >> in;
+	//	if (in == 'q') break;
+	//	std::cout << "out: " << (char)std::tolower(in) << "\n";
+	//
+	//}
 	//int choice = 0;
 
 

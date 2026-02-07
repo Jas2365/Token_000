@@ -21,7 +21,7 @@ void parser(std::string input) {
 	std::stringstream ss(input);
 	std::string word;
 	while(ss >> word ) {
-		nums.push_back(from_string_number(word));
+		//nums.push_back(from_string_number(word));
 	}
 
 	for (const auto& n : nums) {
